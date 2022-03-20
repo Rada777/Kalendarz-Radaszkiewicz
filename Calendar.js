@@ -98,6 +98,139 @@ class Calendar extends Component {
     );
     this.setState({ events: updatedEvents });
   }
+
+  render() {
+    console.log("render()");
+    const eventActions = [
+      <FlatButton
+        label="Anuluj"
+        primary={false}
+        keyboardFocused={true}
+        onClick={this.handleClose}
+      />,
+      <FlatButton
+        label="Usuń"
+        secondary={true}
+        keyboardFocused={true}
+        onClick={() => {
+          this.deleteEvent(), this.handleClose();
+        }}
+      />,
+      <FlatButton
+        label="Potwierdź"
+        primary={true}
+        keyboardFocused={true}
+        onClick={this.handleClose}
+        onClick={() => {
+          this.updateEvent(), this.handleClose();
+        }}
+      />
+    ];
+    const appointmentActions = [
+      <FlatButton label="Anuluj" secondary={true} onClick={this.handleClose} />,
+      <FlatButton
+        label="Potwierdź"
+        primary={true}
+        keyboardFocused={true}
+        onClick={() => {
+          this.setNewAppointment(), this.handleClose();
+        }}
+      />
+    ];
+    return (
+      <div id="Calendar">
+        <BigCalendar
+          events={this.state.events}
+          views={["month", "week", "day", "agenda"]}
+          timeslots={2}
+          defaultView="month"
+          defaultDate={new Date()}
+          selectable={true}
+          onSelectEvent={event => this.handleEventSelected(event)}
+          onSelectSlot={slotInfo => this.handleSlotSelected(slotInfo)}
+        />
+
+        <Dialog
+          title={`Dodaj event dnia: ${moment(this.state.start).format(
+            "MMMM Do YYYY"
+          )}`}
+          actions={appointmentActions}
+          modal={false}
+          open={this.state.openSlot}
+          onRequestClose={this.handleClose}
+        >
+          <TextField
+            floatingLabelText="Tytuł"
+            onChange={e => {
+              this.setTitle(e.target.value);
+            }}
+          />
+          <br />
+          <TextField
+            floatingLabelText="Opis"
+            onChange={e => {
+              this.setDescription(e.target.value);
+            }}
+          />
+          <TimePicker
+            format="ampm"
+            floatingLabelText="Godzina rozpoczęcia"
+            minutesStep={5}
+            value={this.state.start}
+            onChange={this.handleStartTime}
+          />
+          <TimePicker
+            format="ampm"
+            floatingLabelText="Godzina zakończenia"
+            minutesStep={5}
+            value={this.state.end}
+            onChange={this.handleEndTime}
+          />
+        </Dialog>
+
+        <Dialog
+          title={`Edytuj event dnia: ${moment(this.state.start).format(
+            "MMMM Do YYYY"
+          )}`}
+          actions={eventActions}
+          modal={false}
+          open={this.state.openEvent}
+          onRequestClose={this.handleClose}
+        >
+          <TextField
+            defaultValue={this.state.title}
+            floatingLabelText="Tytuł"
+            onChange={e => {
+              this.setTitle(e.target.value);
+            }}
+          />
+          <br />
+          <TextField
+            floatingLabelText="Opis"
+            multiLine={true}
+            defaultValue={this.state.desc}
+            onChange={e => {
+              this.setDescription(e.target.value);
+            }}
+          />
+          <TimePicker
+            format="ampm"
+            floatingLabelText="Godzina rozpoczęcia"
+            minutesStep={5}
+            value={this.state.start}
+            onChange={this.handleStartTime}
+          />
+          <TimePicker
+            format="ampm"
+            floatingLabelText="Godzina zakończenia"
+            minutesStep={5}
+            value={this.state.end}
+            onChange={this.handleEndTime}
+          />
+        </Dialog>
+      </div>
+    );
+  }
 }
 
 export default Calendar;
